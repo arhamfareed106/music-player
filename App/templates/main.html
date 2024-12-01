@@ -1,49 +1,66 @@
-<html>
-   <head>
-    <meta charset="utf-8"/>
-    <title>
-      music player
-    </title>
-   </head>
-   <body>
-    
- 
-    
-      <div class="music-player">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Custom Styles -->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="music-player">
         {% for item in page_obj %}
-       <div class="cover">
-        <img alt="" src="{{item.image.url}}"/>
-       </div>
+        <div class="track">
+            <!-- Album Cover -->
+            <div class="cover">
+                <img src="{{ item.image.url }}" alt="{{ item.title }} Album Cover">
+            </div>
 
-       <div class="titre">
-        <h3>
-         {{item.artist}}
-        </h3>
-        <h1>
-         {{item.title}}
-        </h1>
-       </div>
-       
-       <center><a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}"><i class="fa fa-step-backward fa-2x"></i></a> &nbsp; &nbsp; &nbsp; <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }} {% endif %}"><i class="fa fa-step-forward fa-2x"></i></a></center>
-       
-       <div class="lecteur">
-        <audio class="fc-media" style="width: 100%;" id="fc-media">
-         <source src="{% if item.audio_file %}{{item.audio_file.url}} {% else %} {{item.audio_link}} {% endif %}" type="audio/mp3"/>
-        </audio>
-       </div>
-      </div>     
-    
+            <!-- Track Title and Artist -->
+            <div class="track-info">
+                <h3 class="artist">{{ item.artist }}</h3>
+                <h1 class="title">{{ item.title }}</h1>
+            </div>
 
-    <div class="right-section">
-      <div class="lyrics-container">
-        <div class="lyrics">
-            <p id="song-lyrics" class="song-lyrics" data-lyrics="{{item.lyrics}}"></p>
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                <center>
+                    <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}">
+                        <i class="fa fa-step-backward fa-2x"></i>
+                    </a>
+                    &nbsp; &nbsp; &nbsp;
+                    <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% endif %}">
+                        <i class="fa fa-step-forward fa-2x"></i>
+                    </a>
+                </center>
+            </div>
+
+            <!-- Audio Player -->
+            <div class="audio-player">
+                <audio class="fc-media" id="fc-media" style="width: 100%;" controls>
+                    <source 
+                        src="{% if item.audio_file %}{{ item.audio_file.url }}{% else %}{{ item.audio_link }}{% endif %}" 
+                        type="audio/mp3">
+                </audio>
+            </div>
         </div>
-     </div>
+        {% endfor %}
     </div>
-    
-    
-    {% endfor %}
-.
-   </body>
-  </html>
+
+    <!-- Lyrics Section -->
+    <div class="right-section">
+        <div class="lyrics-container">
+            <div class="lyrics">
+                <p id="song-lyrics" class="song-lyrics" data-lyrics="{{ item.lyrics }}"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>

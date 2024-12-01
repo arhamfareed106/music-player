@@ -2,59 +2,67 @@
 
 <!DOCTYPE html>
 <html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   music player
-  </title>
-  <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelementplayer.min.css" rel="stylesheet"/>
-  <link href="{% static './style.css' %}" rel="stylesheet"/>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+    <!-- Font Awesome -->
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
- </head>
- <body>
+    <!-- MediaElement Player Styles -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelementplayer.min.css" rel="stylesheet">
 
- ]
-  {% include 'main.html' %}
+    <!-- Custom Styles -->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Sofia" rel="stylesheet">
+</head>
+<body>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelement-and-player.min.js">
-  </script>
-  <script src="{% static './script.js' %}">
-  </script>
+    <!-- Include Main Content -->
+    {% include 'main.html' %}
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const audio = document.getElementById('fc-media');  // Replace with the actual ID of your audio element
-        const lyricsContainer = document.getElementById('song-lyrics');
-        let currentLyricIndex = 0;
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-        // Retrieve the lyrics data as a JSON string
-        const lyricsData = JSON.parse(document.getElementById('song-lyrics').getAttribute('data-lyrics'));
+    <!-- MediaElement Player Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelement-and-player.min.js"></script>
 
-        audio.addEventListener('timeupdate', function () {
-          const currentTime = audio.currentTime;
+    <!-- Custom Script -->
+    <script src="{% static 'script.js' %}"></script>
 
-          // Find the current lyrics based on the time
-          while (currentLyricIndex < lyricsData.length - 1 && currentTime >= timeToSeconds(lyricsData[currentLyricIndex + 1].time)) {
-            currentLyricIndex++;
-          }
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = document.getElementById('fc-media'); // Replace with the actual ID of your audio element
+            const lyricsContainer = document.getElementById('song-lyrics');
+            let currentLyricIndex = 0;
 
-          // Update the displayed lyrics
-          lyricsContainer.innerText = lyricsData[currentLyricIndex].lyrics;
+            // Retrieve the lyrics data as a JSON object
+            const lyricsData = JSON.parse(lyricsContainer.getAttribute('data-lyrics'));
+
+            audio.addEventListener('timeupdate', () => {
+                const currentTime = audio.currentTime;
+
+                // Update lyrics based on current time
+                while (
+                    currentLyricIndex < lyricsData.length - 1 &&
+                    currentTime >= timeToSeconds(lyricsData[currentLyricIndex + 1].time)
+                ) {
+                    currentLyricIndex++;
+                }
+
+                // Display the current lyric
+                lyricsContainer.innerText = lyricsData[currentLyricIndex].lyrics;
+            });
+
+            // Convert time (mm:ss) to seconds
+            function timeToSeconds(time) {
+                const [minutes, seconds] = time.split(':').map(Number);
+                return minutes * 60 + seconds;
+            }
         });
-
-        function timeToSeconds(time) {
-          const [minutes, seconds] = time.split(':').map(parseFloat);
-          return minutes * 60 + seconds;
-        }
-      });
-
-  </script>
-  
- </body>
+    </script>
+</body>
 </html>
